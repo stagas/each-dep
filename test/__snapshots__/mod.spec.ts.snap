@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`eachDep complex 1`] = `
+Array [
+  "fixture/a.ts",
+  "fixture/b.ts",
+  "fixture/a.ts",
+  "fixture/c/index.ts",
+  "fixture/c/d.js",
+]
+`;
+
+exports[`eachDep works 1`] = `
+Array [
+  "mod.spec.ts",
+  "../src/each-dep.ts",
+]
+`;
