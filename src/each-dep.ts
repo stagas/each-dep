@@ -1,3 +1,4 @@
+import { omit } from 'everyday-utils'
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
@@ -22,36 +23,42 @@ const extensions = [
 ]
 
 export interface EachDepOptions {
-  cache?: Map<string, { source: string; ids: (readonly [string, string])[] }>
+  entrySource?: string
   external?: boolean
+  alias?: Record<string, string>
+  cache?: Map<string, { source?: string; ids?: (readonly [string, string])[] }>
 }
 
 export async function* eachDep(
-  inputFilename: string,
+  entryFile: string,
   options: EachDepOptions = {},
   seen = new Set<string>(),
 ): AsyncGenerator<string, void, undefined> {
-  const resolved = path.resolve(inputFilename)
+  const resolved = path.resolve(entryFile)
   const parsed = path.parse(resolved)
 
   yield resolved
   seen.add(resolved)
 
   try {
-    let ids: (readonly [string, string])[] = []
-    let source: string
+    let ids: (readonly [string, string])[] | void = []
+    let source: string | void
 
     if (options.cache && options.cache.has(resolved)) {
       ;({ source, ids } = options.cache.get(resolved)!)
     } else {
-      source = await fs.readFile(resolved, 'utf-8')
+      source = options.entrySource ? options.entrySource : await fs.readFile(resolved, 'utf-8')
 
       if (options.cache) {
         options.cache.set(resolved, { source, ids })
       }
 
       ids.push(...(await Promise.all(
-        parseIds(source).map(async x => {
+        parseIds(source).map(async (x): Promise<readonly [string, string] | undefined> => {
+          if (options.alias && x in options.alias) {
+            return [x, options.alias[x]] as const
+          }
+
           if (x.startsWith('.')) {
             const joined = path.join(parsed.dir, x)
             for (const ext of extensions) {
@@ -84,15 +91,15 @@ export async function* eachDep(
       )).filter(Boolean) as (readonly [string, string])[])
     }
 
-    const unseen = ids.filter(([, x]) => {
+    const unseen = ids?.filter(([, x]) => {
       if (!seen.has(x)) {
         seen.add(x)
         return x
       }
     })
 
-    if (unseen.length) {
-      for (const [, id] of unseen) yield* eachDep(id, options, seen)
+    if (unseen?.length) {
+      for (const [, id] of unseen) yield* eachDep(id, omit(options, ['entrySource']), seen)
     }
   } catch (error) {
     console.error(error)
