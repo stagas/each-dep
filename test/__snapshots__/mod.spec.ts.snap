@@ -1,18 +1,68 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`eachDep complex 1`] = `
-Array [
-  "fixture/a.ts",
-  "fixture/b.ts",
-  "fixture/a.ts",
-  "fixture/c/index.ts",
-  "fixture/c/d.js",
-]
-`;
 
 exports[`eachDep works 1`] = `
 Array [
   "mod.spec.ts",
   "../src/each-dep.ts",
+]
+`;
+
+exports[`eachDep complex 1`] = `
+Array [
+  "fixture/a.ts",
+  "fixture/b.ts",
+  "fixture/c/index.ts",
+  "fixture/c/d.js",
+]
+`;
+
+exports[`eachDep dot 1`] = `
+Array [
+  "fixture/dot/dot.js",
+  "fixture/dot/index.js",
+]
+`;
+
+exports[`eachDep with external 1`] = `
+Array [
+  "fixture/pkg-a/index.js",
+  "fixture/pkg-b/index.js",
+]
+`;
+
+exports[`eachDep cache 1`] = `
+Array [
+  "fixture/pkg-a/index.js",
+  "fixture/pkg-b/index.js",
+]
+`;
+
+exports[`eachDep cache 2`] = `
+Array [
+  Array [
+    "/home/stagas/work/stagas/each-dep/test/fixture/pkg-a/index.js",
+    Object {
+      "ids": Array [
+        Array [
+          "pkg-b",
+          "/home/stagas/work/stagas/each-dep/test/fixture/pkg-b/index.js",
+        ],
+      ],
+      "source": "export * from 'pkg-b'
+",
+    },
+  ],
+  Array [
+    "/home/stagas/work/stagas/each-dep/test/fixture/pkg-b/index.js",
+    Object {
+      "ids": Array [
+        Array [
+          "pkg-a",
+          "/home/stagas/work/stagas/each-dep/test/fixture/pkg-a/index.js",
+        ],
+      ],
+      "source": "export * from 'pkg-a'
+",
+    },
+  ],
 ]
 `;
