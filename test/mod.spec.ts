@@ -1,3 +1,4 @@
+// @env node
 import * as path from 'path'
 import { eachDep } from '../src/each-dep'
 
