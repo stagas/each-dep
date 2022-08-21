@@ -3,7 +3,7 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 
 const matchers =
-  /((im|ex)port.*?from\s+['"](?<id1>[^'"]+)['"])|(import\(?\s*['"](?<id2>[^'"]+)['"])|(require\(\s*['"](?<id3>[^'"]+)['"])/g
+  /(?<!")(((im|ex)port.*?from\s+['"](?<id1>[^'"]+)['"])|(import\(?\s*['"](?<id2>[^'"]+)['"])|(require\(\s*['"](?<id3>[^'"]+)['"]))/g
 
 const parseIds = (x: string) =>
   [...x.matchAll(matchers)]
